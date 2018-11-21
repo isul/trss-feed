@@ -5,6 +5,6 @@ ARG BUILD_VERSION
 COPY run.sh /
 COPY trss-${BUILD_VERSION}.jar app.jar
 
-EXPOSE 8080
+EXPOSE 88
 
 ENTRYPOINT ["/bin/sh", "/run.sh"]
