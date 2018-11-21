@@ -1,0 +1,15 @@
+server:
+  port: 8080
+
+opal:
+  torrent:
+    rss:
+      cache.expire: 1800000 # 30분
+      site:
+        tf.url: http://www.tfreeca22.com
+        th.url: https://torrenthaja.com
+        tw.url: https://torrentwal.net
+
+
+
+

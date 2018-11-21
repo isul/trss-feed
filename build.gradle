@@ -1,0 +1,56 @@
+buildscript {
+    ext {
+        springBootVersion = '2.1.0.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath "gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.20.1"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: "com.palantir.docker"
+
+group = 'com.opal.impl'
+version = '1.0'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+
+    implementation('com.rometools:rome:1.11.1')
+    implementation('com.rometools:rome-modules:1.11.1')
+    implementation('org.jsoup:jsoup:1.11.3')
+    implementation('commons-codec:commons-codec:1.11')
+    implementation('org.apache.httpcomponents:httpclient:4.5.6')
+
+    compileOnly('org.projectlombok:lombok:1.18.4')
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+}
+
+task unpack(type: Copy) {
+    dependsOn bootJar
+    from("docker")
+    into("build/docker")
+}
+
+docker {
+    name "stkang90/${bootJar.baseName}:${project.version}"
+    dependsOn unpack
+    files bootJar
+    buildArgs([BUILD_VERSION: project.version])
+}
