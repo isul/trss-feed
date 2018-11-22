@@ -49,7 +49,7 @@ task unpack(type: Copy) {
 }
 
 docker {
-    name "stkang90/${bootJar.baseName}:1.0.2"
+    name "stkang90/${bootJar.baseName}:1.0.3"
     dependsOn unpack
     files bootJar
     buildArgs([BUILD_VERSION: project.version])
