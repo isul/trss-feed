@@ -68,10 +68,10 @@ public class TFreecaImpl implements ITorrentService {
         Elements trEm = new Elements();
         Elements tableEm = doc.select("table[class=b_list] tr");
         tableEm.forEach(element -> {
-            if (element.select("td[class=num]").text().equals("notice")) {
+            if ("notice".equals(element.select("td[class=num]").text())) {
                 return;
             }
-            if (StringUtils.isEmpty(element.select("td[class=datetime").text())) {
+            if (StringUtils.isEmpty(element.select("td[class=datetime]").text())) {
                 return;
             }
             trEm.add(element);
