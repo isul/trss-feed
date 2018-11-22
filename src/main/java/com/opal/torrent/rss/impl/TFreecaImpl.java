@@ -126,7 +126,7 @@ public class TFreecaImpl implements ITorrentService {
 
     @Override
     public long getFileSize(Element element) {
-        return 0;
+        return 1;
     }
 
     @Override
