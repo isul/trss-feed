@@ -41,7 +41,7 @@ public class RssService {
         List<Item> itemList = new ArrayList<>();
         Arrays.stream(sites).parallel().forEach(site ->
                 itemList.addAll(findAllBySite(reqBaseUri.toString(), site, null, search, page, maxPage, prefer)));
-        itemList.sort(Comparator.comparing(Item::getPubDate));
+        itemList.sort((l, r) -> r.getPubDate().compareTo(l.getPubDate()));
 
         channel.setItems(itemList);
         return channel;
@@ -88,7 +88,7 @@ public class RssService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        itemList.sort(Comparator.comparing(Item::getPubDate));
+        itemList.sort((l, r) -> r.getPubDate().compareTo(l.getPubDate()));
         return itemList;
     }
 

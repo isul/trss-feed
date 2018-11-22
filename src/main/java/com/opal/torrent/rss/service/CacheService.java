@@ -13,6 +13,5 @@ public class CacheService {
     @CacheEvict(allEntries = true, cacheNames = {CacheService.CACHE_NAME_RSS, CacheService.CACHE_NAME_RSS_BY_SITE})
     @Scheduled(fixedDelayString = "${opal.torrent.rss.cache.expire}")
     public void cacheEvict() {
-        System.out.println("cacheEvict");
     }
 }
