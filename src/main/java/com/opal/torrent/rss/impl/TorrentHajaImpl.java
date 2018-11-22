@@ -156,7 +156,7 @@ public class TorrentHajaImpl implements ITorrentService {
     @Override
     public String getMagnet(Document doc, String prefer) {
         Elements fileNameEm = doc.select("th[class=title]");
-        if (fileNameEm.size() == 0) {
+        if (fileNameEm.isEmpty()) {
             return null;
         }
         int magnetIndex = getMagnetIndex(fileNameEm, prefer);

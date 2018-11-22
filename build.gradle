@@ -21,7 +21,7 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: "com.palantir.docker"
 
 group = 'com.opal.impl'
-version = '1.0.1'
+version = '1.0.2'
 sourceCompatibility = 1.8
 
 repositories {
@@ -49,7 +49,7 @@ task unpack(type: Copy) {
 }
 
 docker {
-    name "stkang90/${bootJar.baseName}:${project.version}"
+    name "stkang90/${bootJar.baseName}:1.0.2"
     dependsOn unpack
     files bootJar
     buildArgs([BUILD_VERSION: project.version])

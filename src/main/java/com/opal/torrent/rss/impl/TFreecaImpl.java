@@ -131,12 +131,12 @@ public class TFreecaImpl implements ITorrentService {
     @Override
     public String getMagnet(Document doc, String prefer) {
         Elements fileNameEm = doc.select("div[class=torrent_file]");
-        if (fileNameEm.size() == 0) {
+        if (fileNameEm.isEmpty()) {
             return null;
         }
         int magnetIndex = getMagnetIndex(fileNameEm, prefer);
-        Elements magentEm = doc.select("div[class=torrent_magnet]");
-        return magentEm.get(magnetIndex).text();
+        Elements magnetEm = doc.select("div[class=torrent_magnet]");
+        return magnetEm.get(magnetIndex).text();
     }
 
     private int getMagnetIndex(Elements elements, String prefer) {

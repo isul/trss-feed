@@ -81,7 +81,7 @@ public class TorrentWalImpl implements ITorrentService {
         titleLink.setTitle(titleElem.text());
 
         String linkUrl = titleElem.attr("href");
-        linkUrl = linkUrl.replaceFirst("..", "");
+        linkUrl = linkUrl.replaceFirst("../", "");
         titleLink.setLink(String.format("%s/%s", BASE_URL, linkUrl));
         return titleLink;
     }
@@ -99,7 +99,7 @@ public class TorrentWalImpl implements ITorrentService {
     @Override
     public TBoard getBoard(String linkUrl) {
         TBoard board = new TBoard();
-        Pattern pattern = Pattern.compile("\\.\\./(.+)/(\\d+)\\.html");
+        Pattern pattern = Pattern.compile("net/(.+)/(\\d+)\\.html");
         Matcher matcher = pattern.matcher(linkUrl);
         if (matcher.find()) {
             board.setName(matcher.group(1));
@@ -124,7 +124,7 @@ public class TorrentWalImpl implements ITorrentService {
     public String getMagnet(Document doc, String prefer) {
         Elements fileTableEm = doc.select("table[id=file_table] td");
         Elements fileNameEm = fileTableEm.select("span");
-        if (fileTableEm.size() == 0) {
+        if (fileTableEm.isEmpty()) {
             return null;
         }
         int magnetIndex = getMagnetIndex(fileNameEm, prefer);
