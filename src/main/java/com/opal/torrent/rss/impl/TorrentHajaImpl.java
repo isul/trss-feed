@@ -111,7 +111,12 @@ public class TorrentHajaImpl implements ITorrentService {
         titleLink.setTitle(titleElem.text());
 
         String linkUrl = titleElem.attr("href");
-        titleLink.setLink(linkUrl);
+        if (linkUrl.startsWith("http")) {
+            titleLink.setLink(linkUrl);
+        } else {
+            linkUrl = linkUrl.replaceFirst("./", "");
+            titleLink.setLink(String.format("%s/bbs/%s", BASE_URL, linkUrl));
+        }
         return titleLink;
     }
 
