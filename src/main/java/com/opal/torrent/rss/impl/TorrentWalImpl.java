@@ -64,6 +64,7 @@ public class TorrentWalImpl implements ITorrentService {
     @Override
     public List<Category> getCategory(Element element, String board) {
         Category category = new Category();
+        category.setDomain("TW");
         Elements subjectElement = element.select("td[class=subject] a");
         if (subjectElement != null) {
             category.setValue(subjectElement.get(0).text());

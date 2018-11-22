@@ -32,7 +32,7 @@ public class RssService {
     private final ApplicationContext applicationContext;
 
     @Cacheable(CacheService.CACHE_NAME_RSS)
-    public Channel getRss(HttpServletRequest req, String search, int page, int maxPage) throws URISyntaxException {
+    public Channel getRss(HttpServletRequest req, String search, int page, int maxPage, String prefer) throws URISyntaxException {
         URI reqBaseUri = WebUtil.getRequestBaseUri(req);
         Channel channel = getDefaultChannel();
         channel.setLink(WebUtil.getRequestUrl(req));
@@ -40,7 +40,7 @@ public class RssService {
         String[] sites = applicationContext.getBeanNamesForType(ITorrentService.class);
         List<Item> itemList = new ArrayList<>();
         Arrays.stream(sites).parallel().forEach(site ->
-                itemList.addAll(findAllBySite(reqBaseUri.toString(), site, null, search, page, maxPage)));
+                itemList.addAll(findAllBySite(reqBaseUri.toString(), site, null, search, page, maxPage, prefer)));
         itemList.sort(Comparator.comparing(Item::getPubDate));
 
         channel.setItems(itemList);
@@ -48,11 +48,11 @@ public class RssService {
     }
 
     @Cacheable(CacheService.CACHE_NAME_RSS_BY_SITE)
-    public Channel getRssBySite(HttpServletRequest req, String site, List<String> boards, String search, int page, int maxPage) throws URISyntaxException {
+    public Channel getRssBySite(HttpServletRequest req, String site, List<String> boards, String search, int page, int maxPage, String prefer) throws URISyntaxException {
         URI reqBaseUri = WebUtil.getRequestBaseUri(req);
         Channel channel = getDefaultChannel();
         channel.setLink(WebUtil.getRequestUrl(req));
-        channel.setItems(findAllBySite(reqBaseUri.toString(), site, boards, search, page, maxPage));
+        channel.setItems(findAllBySite(reqBaseUri.toString(), site, boards, search, page, maxPage, prefer));
         return channel;
     }
 
@@ -70,7 +70,7 @@ public class RssService {
         return null;
     }
 
-    private List<Item> findAllBySite(String reqBaseUri, String site, List<String> boards, String search, int page, int maxPage) {
+    private List<Item> findAllBySite(String reqBaseUri, String site, List<String> boards, String search, int page, int maxPage, String prefer) {
         List<Item> itemList = new ArrayList<>();
         ITorrentService torrentService = applicationContext.getBean(site, ITorrentService.class);
         try {
@@ -79,7 +79,7 @@ public class RssService {
                 Elements elements = torrentService.getTableElements(doc);
                 for (Element element : elements) {
                     try {
-                        itemList.add(getItem(reqBaseUri, torrentService, element));
+                        itemList.add(getItem(reqBaseUri, torrentService, element, prefer));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -92,7 +92,7 @@ public class RssService {
         return itemList;
     }
 
-    private Item getItem(String reqBaseUri, ITorrentService torrentService, Element element) throws URISyntaxException {
+    private Item getItem(String reqBaseUri, ITorrentService torrentService, Element element, String prefer) throws URISyntaxException {
         Item item = new Item();
         TitleLink titleLink = torrentService.getTitleAndLink(element);
         item.setTitle(titleLink.getTitle());
@@ -103,6 +103,9 @@ public class RssService {
         item.setPubDate(torrentService.getDate(element));
 
         String downloadUrl = String.format("%s/rss/%s/%s/%s/down", reqBaseUri, torrentService.getSiteSimpleName(), board.getName(), board.getId());
+        if (!StringUtils.isEmpty(prefer)) {
+            downloadUrl += String.format("?prefer=%s", prefer);
+        }
         Enclosure enclosure = new Enclosure();
         enclosure.setUrl(downloadUrl);
         enclosure.setLength(torrentService.getFileSize(element));

@@ -22,9 +22,10 @@ public class RssController {
     public Channel getRssFeedBySite(HttpServletRequest request,
                                     @RequestParam String search,
                                     @RequestParam(defaultValue = "1", required = false) int page,
-                                    @RequestParam(defaultValue = "1", required = false) int maxPage) throws URISyntaxException {
+                                    @RequestParam(defaultValue = "1", required = false) int maxPage,
+                                    @RequestParam(required = false) String prefer) throws URISyntaxException {
 
-        return rssService.getRss(request, search, page, maxPage);
+        return rssService.getRss(request, search, page, maxPage, prefer);
     }
 
     @GetMapping("/{site}/feed")
@@ -34,9 +35,10 @@ public class RssController {
                                             @RequestParam(defaultValue = "", required = false) String[] boards,
                                             @RequestParam String search,
                                             @RequestParam(defaultValue = "1", required = false) int page,
-                                            @RequestParam(defaultValue = "1", required = false) int maxPage) throws URISyntaxException {
+                                            @RequestParam(defaultValue = "1", required = false) int maxPage,
+                                            @RequestParam(required = false) String prefer) throws URISyntaxException {
 
-        return rssService.getRssBySite(request, site, Arrays.asList(boards), search, page, maxPage);
+        return rssService.getRssBySite(request, site, Arrays.asList(boards), search, page, maxPage, prefer);
     }
 
     @GetMapping("/{site}/{board}/{boardId}/down")

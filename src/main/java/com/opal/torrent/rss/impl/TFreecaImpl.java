@@ -71,6 +71,7 @@ public class TFreecaImpl implements ITorrentService {
     @Override
     public List<Category> getCategory(Element element, String board) {
         Category category = new Category();
+        category.setDomain("TF");
         category.setValue(TFBoard.valueOf(board).getName());
         return Collections.singletonList(category);
     }

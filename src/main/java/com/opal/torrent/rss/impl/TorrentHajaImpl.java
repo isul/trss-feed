@@ -94,6 +94,7 @@ public class TorrentHajaImpl implements ITorrentService {
     @Override
     public List<Category> getCategory(Element element, String board) {
         Category category = new Category();
+        category.setDomain("TH");
         Elements subjectElement = element.select("td[class=td-num]");
         if (subjectElement != null) {
             category.setValue(subjectElement.text());
