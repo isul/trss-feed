@@ -42,7 +42,7 @@ public class TorrentHajaImpl implements ITorrentService {
     @Override
     public List<Document> queryList(List<String> boards, String search, int page, int maxPage) {
         List<Document> docList = new ArrayList<>();
-        if (boards.isEmpty()) {
+        if (boards == null || boards.isEmpty()) {
             IntStream.range(page, maxPage).parallel().forEach(p -> {
                 Map<String, Object> mapParam = new HashMap<>();
                 mapParam.put("search_flag", "search");

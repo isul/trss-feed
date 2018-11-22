@@ -40,7 +40,7 @@ public class TFreecaImpl implements ITorrentService {
     @Override
     public List<Document> queryList(List<String> boards, String search, int page, int maxPage) {
         List<Document> docList = new ArrayList<>();
-        if (boards.isEmpty()) {
+        if (boards == null || boards.isEmpty()) {
             boards = Arrays.stream(TFBoard.values()).map(TFBoard::name).collect(Collectors.toList());
         }
 
