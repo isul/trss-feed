@@ -77,13 +77,13 @@ public class RssService {
             List<Document> docList = torrentService.queryList(boards, search, page, maxPage + 1);
             docList.stream().parallel().forEach(doc -> {
                 Elements elements = torrentService.getTableElements(doc);
-                for (Element element : elements) {
+                elements.forEach(element -> {
                     try {
                         itemList.add(getItem(reqBaseUri, torrentService, element, prefer));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
+                });
             });
         } catch (Exception e) {
             e.printStackTrace();

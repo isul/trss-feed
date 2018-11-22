@@ -65,7 +65,18 @@ public class TFreecaImpl implements ITorrentService {
 
     @Override
     public Elements getTableElements(Document doc) {
-        return doc.select("table[class=b_list] tr[class=bgcolor]");
+        Elements trEm = new Elements();
+        Elements tableEm = doc.select("table[class=b_list] tr");
+        tableEm.forEach(element -> {
+            if (element.select("td[class=num]").text().equals("notice")) {
+                return;
+            }
+            if (StringUtils.isEmpty(element.select("td[class=datetime").text())) {
+                return;
+            }
+            trEm.add(element);
+        });
+        return trEm;
     }
 
     @Override
