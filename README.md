@@ -24,13 +24,15 @@ Torrent RSS Feed
 
 # 주의사항
 검색은 30분 단위로 캐시 됩니다.
+
 같은 파라미터로 검색 시 30분간 각 사이트의 검색을 다시시도 하지 않습니다.
+
 Download Station 의 RSS 업데이트 간격을 30분 이상으로 설정해주세요.
 
 # 사용방법
 __모든 사이트 검색__
 ```
-http://localhost:88/feed?search={검색어}&page={페이지}&maxPage={최대_페이지}&prefer={지향단어}
+http://localhost:88/rss/feed?search={검색어}&page={페이지}&maxPage={최대_페이지}&prefer={지향단어}
 ```
 - {검색어} : 검색할 단어
 - {페이지} : 특정 페이지 부터 검색 (기본값: 1, 생략가능)
@@ -39,14 +41,14 @@ http://localhost:88/feed?search={검색어}&page={페이지}&maxPage={최대_페
 
 ({페이지} <= {최대페이지})
 
-예) http://localhost:88/feed?search=예능
+예) http://localhost:88/rss/feed?search=예능
 
-예) http://localhost:88/feed?search=예능&page=1&maxPage=3&prefer=720p
+예) http://localhost:88/rss/feed?search=예능&page=1&maxPage=3&prefer=720p
 
 
 __특정 사이트 및 게시판 검색__
 ```
-http://localhost:88/{사이트}/feed?boards={게시판}&seacrh={검색어}&page={페이지}&maxPage={최대_페이지}&prefer={지향단어}
+http://localhost:88/rss/{사이트}/feed?boards={게시판}&seacrh={검색어}&page={페이지}&maxPage={최대_페이지}&prefer={지향단어}
 ```
 - {사이트} : 지원 사이트 목록 (필수)
 - {게시판} : 사이트별 지원 게시판 이름 (멀티 게시판 지원, 생략가능)
@@ -57,11 +59,11 @@ http://localhost:88/{사이트}/feed?boards={게시판}&seacrh={검색어}&page=
 
 ({페이지} <= {최대페이지})
 
-예) http://localhost:88/tf/feed?search=예능
+예) http://localhost:88/rss/tf/feed?search=예능
 
-예) http://localhost:88/tf/feed?boards=tent,tv,tani&search=예능
+예) http://localhost:88/rss/tf/feed?boards=tent,tv,tani&search=예능
 
-예) http://localhost:88/tf/feed?boards=tent&search=예능&page=1&maxPage=2&prefer=1080p
+예) http://localhost:88/rss/tf/feed?boards=tent&search=예능&page=1&maxPage=2&prefer=1080p
 
 # Docker
 https://hub.docker.com/r/stkang90/trss/
