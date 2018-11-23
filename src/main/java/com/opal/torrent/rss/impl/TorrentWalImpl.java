@@ -18,7 +18,6 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -89,11 +88,14 @@ public class TorrentWalImpl implements ITorrentService {
     @Override
     public Date getDate(Element element) {
         String dateStr = element.select("td[class=datetime]").text();
+        LocalDate localDate = LocalDate.now();
+        if (StringUtils.isEmpty(dateStr) || !dateStr.contains("-")) {
+            return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        }
         String[] date = dateStr.split("-");
-        LocalDateTime localDateTime = LocalDate.now().withMonth(Integer.parseInt(date[0]))
-                .withDayOfMonth(Integer.parseInt(date[1]))
-                .atTime(0, 0);
-        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        localDate = localDate.withMonth(Integer.parseInt(date[0]))
+                .withDayOfMonth(Integer.parseInt(date[1]));
+        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
     @Override
