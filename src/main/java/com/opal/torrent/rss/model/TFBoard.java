@@ -8,7 +8,8 @@ public enum TFBoard {
     tdrama("드라마"),
     tent("예능"),
     tv("TV"),
-    tani("애니");
+    tani("애니"),
+    tmusic("음악");
 
     private String name;
 
