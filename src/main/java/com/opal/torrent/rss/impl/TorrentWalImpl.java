@@ -88,13 +88,16 @@ public class TorrentWalImpl implements ITorrentService {
     @Override
     public Date getDate(Element element) {
         String dateStr = element.select("td[class=datetime]").text();
-        LocalDate localDate = LocalDate.now();
+        LocalDate localNowDate = LocalDate.now();
         if (StringUtils.isEmpty(dateStr) || !dateStr.contains("-")) {
-            return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            return Date.from(localNowDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         }
         String[] date = dateStr.split("-");
-        localDate = localDate.withMonth(Integer.parseInt(date[0]))
+        LocalDate localDate = localNowDate.withMonth(Integer.parseInt(date[0]))
                 .withDayOfMonth(Integer.parseInt(date[1]));
+        if (!localDate.isEqual(localNowDate) && localDate.isAfter(localNowDate)) {
+            localDate = localDate.withYear(localDate.getYear() - 1);
+        }
         return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
