@@ -87,7 +87,13 @@ public class TorrentHajaImpl implements ITorrentService {
 
     @Override
     public Elements getTableElements(Document doc) {
-        return doc.select("div[class=board-list-body] tbody tr");
+        Elements elements = new Elements();
+        doc.select("div[class=board-list-body] tbody tr").forEach(element -> {
+            if (StringUtils.isEmpty(element.attr("class"))) {
+                elements.add(element);
+            }
+        });
+        return elements;
     }
 
     @Override
@@ -128,8 +134,16 @@ public class TorrentHajaImpl implements ITorrentService {
             return Date.from(localNowDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         }
         String[] date = dateStr.split("\\.");
-        LocalDate localDate = localNowDate.withMonth(Integer.parseInt(date[0]))
-                .withDayOfMonth(Integer.parseInt(date[1]));
+
+        LocalDate localDate;
+        if (date.length == 3) {
+            localDate = localNowDate.withYear(Integer.valueOf(date[0]))
+                    .withMonth(Integer.valueOf(date[1]))
+                    .withDayOfMonth(Integer.valueOf(date[2]));
+        } else {
+            localDate = localNowDate.withMonth(Integer.valueOf(date[0]))
+                    .withDayOfMonth(Integer.valueOf(date[1]));
+        }
         if (!localDate.isEqual(localNowDate) && localDate.isAfter(localNowDate)) {
             localDate = localDate.withYear(localDate.getYear() - 1);
         }
