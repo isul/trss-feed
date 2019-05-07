@@ -135,7 +135,7 @@ public class TFreecaImpl implements ITorrentService {
         mapParam.put("wr_id", boardId);
         String param = WebUtil.urlEncodeUTF8(mapParam);
         String queryUrl = String.format("%s/info.php?%s", BASE_URL, param);
-        return Jsoup.connect(queryUrl).method(Connection.Method.GET).ignoreContentType(true).get();
+        return Jsoup.parse(Jsoup.connect(queryUrl).method(Connection.Method.GET).ignoreContentType(true).get().outerHtml().replaceAll("<!--", "<").replaceAll("-->", ">"));
     }
 
     @Override
