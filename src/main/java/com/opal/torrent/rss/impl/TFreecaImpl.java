@@ -135,11 +135,12 @@ public class TFreecaImpl implements ITorrentService {
         mapParam.put("wr_id", boardId);
         String param = WebUtil.urlEncodeUTF8(mapParam);
         String queryUrl = String.format("%s/info.php?%s", BASE_URL, param);
-        return Jsoup.parse(Jsoup.connect(queryUrl).method(Connection.Method.GET).ignoreContentType(true).get().outerHtml().replaceAll("<!--", "<").replaceAll("-->", ">"));
+        return Jsoup.connect(queryUrl).method(Connection.Method.GET).ignoreContentType(true).get();
     }
 
     @Override
     public String getMagnet(Document doc, String prefer) {
+        doc = Jsoup.parse(doc.outerHtml().replaceAll("<!--", "<").replaceAll("-->", ">"));
         Elements fileNameEm = doc.select("div[class=torrent_file]");
         if (fileNameEm.isEmpty()) {
             return null;
