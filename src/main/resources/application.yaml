@@ -1,5 +1,5 @@
 server:
-  port: 88
+  port: 90
 
 opal:
   torrent:

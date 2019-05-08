@@ -15,23 +15,27 @@ Torrent RSS Feed
   - tani: 애니메이션
   - tmusic: 음악
 
+
 ~~- TH (이용불가)~~
   - mos: 영화
   - tvs: 국내/해외TV
   - mvs: 음악/영상
-  
+
+
 - TW
   - 전체 게시판 검색만 지원
+
 
 - TM
   - movie_new: 최신영화
   - movie_old: 이전영화
-    kr_ent: 예능/오락
-    kr_daq: 시사/요양
-    kr_drama: 드라마
-    eng_drama: 외국드라마
-    ani: 애니
-    music: 음악
+  - kr_ent: 예능/오락
+  - kr_daq: 시사/요양
+  - kr_drama: 드라마
+  - eng_drama: 외국드라마
+  - ani: 애니
+  - music: 음악
+
 
 # 주의사항
 검색은 30분 단위로 캐시 됩니다.
