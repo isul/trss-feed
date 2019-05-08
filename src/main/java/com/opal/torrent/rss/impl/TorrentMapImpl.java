@@ -78,7 +78,8 @@ public class TorrentMapImpl implements ITorrentService {
     @Override
     public TitleLink getTitleAndLink(Element element) {
         TitleLink titleLink = new TitleLink();
-        Element titleElem = element.select("a").get(0);
+        Elements a = element.select("a");
+        Element titleElem = a.get(a.size() - 1);
         titleLink.setTitle(titleElem.text());
 
         String linkUrl = titleElem.attr("href");
