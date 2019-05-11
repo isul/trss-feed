@@ -7,7 +7,7 @@ Torrent RSS Feed
 
 
 # 지원 사이트 및 게시판
-~~- TF (이용불가)~~
+- TF
   - tmovie: 영화
   - tdrama: 드라마
   - tent: 예능
