@@ -56,6 +56,7 @@ public class RssService {
         return channel;
     }
 
+    @Cacheable(CacheService.CACHE_NAME_DOWNLOAD_LINK)
     public String getDownloadLink(String site, String board, String boardId, String prefer) {
         ITorrentService torrentService = applicationContext.getBean(site, ITorrentService.class);
         try {
