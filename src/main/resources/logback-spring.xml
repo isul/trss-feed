@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+<configuration>
+
+	<appender name="dailyRollingFileAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<prudent>true</prudent>
+
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>/var/log/trss.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>100MB</totalSizeCap>
+		</rollingPolicy>
+
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level --- [%thread]
+				%logger{35} : %msg %n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="console"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<withJansi>true</withJansi>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss.SSS} %green([%-5level]) %yellow(%C{1.}): %msg%n%throwable
+			</Pattern>
+		</layout>
+	</appender>
+
+	<logger name="org.springframework.web" level="INFO" />
+	<logger name="com.gargoylesoftware.htmlunit" level="ERROR" />
+	<logger name="com.opal.torrent.rss" level="DEBUG" />
+
+	<root level="INFO">
+		<appender-ref ref="dailyRollingFileAppender" />
+		<appender-ref ref="console" />
+	</root>
+</configuration>
