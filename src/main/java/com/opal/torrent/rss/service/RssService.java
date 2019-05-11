@@ -61,9 +61,9 @@ public class RssService {
         ITorrentService torrentService = applicationContext.getBean(site, ITorrentService.class);
         try {
             Document doc = torrentService.queryView(board, boardId);
-            String magnet = torrentService.getMagnet(doc, prefer);
-            if (!StringUtils.isEmpty(magnet)) {
-                return magnet;
+            String downloadUrl = torrentService.getDownloadUrl(doc, prefer);
+            if (!StringUtils.isEmpty(downloadUrl)) {
+                return downloadUrl;
             }
         } catch (Exception e) {
             e.printStackTrace();

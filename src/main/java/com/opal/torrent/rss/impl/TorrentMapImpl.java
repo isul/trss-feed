@@ -129,13 +129,13 @@ public class TorrentMapImpl implements ITorrentService {
     }
 
     @Override
-    public String getMagnet(Document doc, String prefer) {
+    public String getDownloadUrl(Document doc, String prefer) {
         Elements fileNameEm = doc.select("section[id=bo_v_file] ul li a strong");
         if (fileNameEm.isEmpty()) {
             return null;
         }
         int magnetIndex = getMagnetIndex(fileNameEm, prefer);
-        Elements magnetEm = doc.select("section[id=bo_v_file] ul li div a");
+        Elements magnetEm = doc.select("section[id=bo_v_file] ul li a");
         return magnetEm.get(magnetIndex).attr("href");
     }
 

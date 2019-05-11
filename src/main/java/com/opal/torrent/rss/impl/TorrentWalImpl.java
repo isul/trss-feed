@@ -126,7 +126,7 @@ public class TorrentWalImpl implements ITorrentService {
     }
 
     @Override
-    public String getMagnet(Document doc, String prefer) {
+    public String getDownloadUrl(Document doc, String prefer) {
         Elements fileTableEm = doc.select("table[id=file_table] td");
         Elements fileNameEm = fileTableEm.select("span");
         if (fileTableEm.isEmpty()) {
