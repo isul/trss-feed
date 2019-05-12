@@ -167,7 +167,7 @@ public class TorrentHajaImpl implements ITorrentService {
     }
 
     @Override
-    public String getMagnet(Document doc, String prefer) {
+    public String getDownloadUrl(Document doc, String prefer) {
         Elements fileNameEm = doc.select("div[class=read_torrent] table");
 
         int magnetIndex = getMagnetIndex(fileNameEm, prefer);

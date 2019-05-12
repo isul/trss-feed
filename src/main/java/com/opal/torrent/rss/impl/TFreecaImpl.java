@@ -1,27 +1,21 @@
 package com.opal.torrent.rss.impl;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.opal.torrent.rss.model.QqCaptchaResult;
 import com.opal.torrent.rss.model.TBoard;
 import com.opal.torrent.rss.model.TFBoard;
 import com.opal.torrent.rss.model.TitleLink;
+import com.opal.torrent.rss.service.FileTenderService;
 import com.opal.torrent.rss.service.ITorrentService;
 import com.opal.torrent.rss.util.WebUtil;
 import com.rometools.rome.feed.rss.Category;
+import lombok.RequiredArgsConstructor;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.boot.json.BasicJsonParser;
-import org.springframework.boot.json.JsonParser;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -32,10 +26,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service(TFreecaImpl.SITE_SIMPLE_NAME)
+@RequiredArgsConstructor
 public class TFreecaImpl implements ITorrentService {
-    final Logger logger = LoggerFactory.getLogger(getClass());
     final static String SITE_SIMPLE_NAME = "tf";
-    final static String QQ_CAPTCHA_URL = "https://ssl.captcha.qq.com/cap_union_prehandle";
+
+    private final FileTenderService fileTenderService;
 
     @Value("${opal.torrent.rss.site.tf.url}")
     private String BASE_URL;
@@ -150,118 +145,18 @@ public class TFreecaImpl implements ITorrentService {
     }
 
     @Override
-    public String getMagnet(Document doc, String prefer) {
-        Elements elements = doc.select("body");
-        if (elements.isEmpty()) {
+    public String getDownloadUrl(Document doc, String prefer) {
+        Elements downLinkEm = doc.select("tbody td[align=left] a[class=font11]");
+        if (downLinkEm.isEmpty()) {
             return null;
         }
-        String torrent = getTorrentLink(elements);
-        logger.info("getMagnet(): TorrentLink-> {}", torrent);
-        try (final WebClient webClient = new WebClient()) {
-            webClient.getOptions().setJavaScriptEnabled(true);
-            webClient.getOptions().setRedirectEnabled(true);
-            webClient.getOptions().setCssEnabled(false);
-            webClient.getOptions().setUseInsecureSSL(true);
-            webClient.getOptions().setThrowExceptionOnScriptError(false);
-            webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-            
-            final HtmlPage page = webClient.getPage(torrent);
-            webClient.waitForBackgroundJavaScript(1000);
-            
-            DomElement anchor = page.getElementByName("download");
-            anchor.setAttribute("style", "display: block; width: 100px;");
-            anchor.click();
-            webClient.waitForBackgroundJavaScript(2000);
-            String url = page.getElementById("Down").getAttribute("action");
-            String key = page.getElementByName("key").getAttribute("value");
-            String ticket = page.getElementById("Ticket").getAttribute("value");
-            String randstr = page.getElementById("Randstr").getAttribute("value");
-            String userIP = page.getElementByName("UserIP").getAttribute("value");
-            Map<String, Object> mapParam = new HashMap<>();
-            mapParam.put("key", key);
-            mapParam.put("Ticket", ticket);
-            mapParam.put("Randstr", randstr);
-            mapParam.put("UserIP", userIP);
-            logger.debug("getMagnet(): mapParam-> {}", mapParam);
-            if (!StringUtils.isEmpty(url)
-                    && !StringUtils.isEmpty(key)
-                    && !StringUtils.isEmpty(ticket)
-                    && !StringUtils.isEmpty(randstr)
-                    && !StringUtils.isEmpty(userIP)) {
-                String param = WebUtil.urlEncodeUTF8(mapParam);
-                torrent = String.format("%s?%s", url, param);
-            }
-            else {
-                if (StringUtils.isEmpty(url))
-                    url = "http://file.filetender.com/file.php";
-                String appId = anchor.getAttribute("data-appid");
-                QqCaptchaResult qqCaptchaResult = getCaptchaResult(torrent, appId);
-                if (qqCaptchaResult != null) {
-                    mapParam.put("Ticket", qqCaptchaResult.getTicket());
-                    mapParam.put("Randstr", qqCaptchaResult.getRandstr());
-                    String param = WebUtil.urlEncodeUTF8(mapParam);
-                    torrent = String.format("%s?%s", url, param);
-                }
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        logger.info("getMagnet(): torrent-> {}", torrent);
-        return torrent;
+        int index = getTorrentIndex(downLinkEm, prefer);
+        String href = downLinkEm.get(index).attr("href");
+        return fileTenderService.getDownloadUrl(href);
+
     }
 
-    private QqCaptchaResult getCaptchaResult(String referrer, String appId) {
-        final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0";
-        try {
-            Document document = Jsoup.connect(QQ_CAPTCHA_URL)
-                                        .referrer(referrer)
-                                        .userAgent(USER_AGENT)
-                                        .data("aid", appId)
-                                        .data("accver", "1")
-                                        .data("showtype", "popup")
-                                        .data("ua", Base64.getEncoder().encodeToString(USER_AGENT.getBytes()))
-                                        .data("noheader", "1")
-                                        .data("fb", "1")
-                                        .data("tkid", appId)
-                                        .data("grayscale", "1")
-                                        .data("clientype", "2")
-                                        .data("subsid", "1")
-                                        .data("callback", "_aq_" + appId)
-                                        .method(Connection.Method.GET)
-                                        .ignoreContentType(true)
-                                        .get();
-            logger.debug("getCaptchaResult(): {}", document.text());
-            String contents = document.text().substring(document.text().indexOf("(")+1).replace(")", "");
-            JsonParser parser = new BasicJsonParser();
-            Map<String, Object> map = parser.parseMap(contents);
-            return QqCaptchaResult.builder()
-                                    .ticket((String)map.get("ticket"))
-                                    .randstr((String)map.get("randstr"))
-                                    .build();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private String getTorrentLink(Elements elements) {
-        for (Element el: elements) {
-            if (el.hasAttr("href") && el.attr("href").contains("filetender")) {
-                return el.attr("href");
-            }
-            Elements children = el.children();
-            if (children.size() > 0) {
-                String torrent = getTorrentLink(children);
-                if (!StringUtils.isEmpty(torrent))
-                    return torrent;
-            }
-        }
-        return null;
-    }
-
-    private int getMagnetIndex(Elements elements, String prefer) {
+    private int getTorrentIndex(Elements elements, String prefer) {
         if (StringUtils.isEmpty(prefer)) {
             return 0;
         }

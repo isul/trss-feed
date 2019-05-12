@@ -32,5 +32,5 @@ public interface ITorrentService {
 
     Document queryView(String board, String boardId) throws IOException;
 
-    String getMagnet(Document doc, String prefer);
+    String getDownloadUrl(Document doc, String prefer);
 }

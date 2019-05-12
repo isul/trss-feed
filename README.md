@@ -26,7 +26,7 @@ Torrent RSS Feed
   - 전체 게시판 검색만 지원
 
 
-- TM
+~~- TM (이용불가)~~
   - movie_new: 최신영화
   - movie_old: 이전영화
   - kr_ent: 예능/오락
